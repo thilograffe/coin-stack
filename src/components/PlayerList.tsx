@@ -36,7 +36,7 @@ const PlayerList = ({ players, onUpdatePlayerName }: PlayerListProps) => {
 
   return (
     <div className="card">
-      <h2>Players</h2>
+      <h2>Guthaben</h2>
       <div className="grid-2 keep-columns">
         {players.map((player) => (
           <div key={player.id} className="player-card">

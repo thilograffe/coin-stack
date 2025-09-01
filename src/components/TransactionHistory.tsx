@@ -62,7 +62,7 @@ const TransactionHistory = ({
                         {formatDate(transaction.timestamp)}
                       </div>
                       <div className="font-semibold text-lg">
-                        {formatAmount(transaction.amountPerReceiver)} per person
+                        {formatAmount(transaction.amountPerPayer)} per payer
                       </div>
                     </div>
                     <div className="text-right">
@@ -72,14 +72,6 @@ const TransactionHistory = ({
                     </div>
                   </div>
 
-                  {transaction.description && (
-                    <div className="mb-2">
-                      <p className="text-sm italic text-gray">
-                        "{transaction.description}"
-                      </p>
-                    </div>
-                  )}
-
                   <div className="grid-2 gap-3">
                     <div>
                       <h4 className="text-sm font-semibold text-red mb-1">
@@ -88,7 +80,8 @@ const TransactionHistory = ({
                       <ul className="text-sm">
                         {transaction.payers.map((payer) => (
                           <li key={payer.id} className="text-red">
-                            • {payer.name}
+                            • {payer.name} (
+                            {formatAmount(transaction.amountPerPayer)})
                           </li>
                         ))}
                       </ul>
@@ -98,12 +91,19 @@ const TransactionHistory = ({
                         Received:
                       </h4>
                       <ul className="text-sm">
-                        {transaction.receivers.map((receiver) => (
-                          <li key={receiver.id} className="text-green">
-                            • {receiver.name} (
-                            {formatAmount(transaction.amountPerReceiver)})
-                          </li>
-                        ))}
+                        {transaction.receivers.map((receiver) => {
+                          const totalPaid =
+                            transaction.amountPerPayer *
+                            transaction.payers.length;
+                          const amountPerReceiver =
+                            totalPaid / transaction.receivers.length;
+                          return (
+                            <li key={receiver.id} className="text-green">
+                              • {receiver.name} (
+                              {formatAmount(amountPerReceiver)})
+                            </li>
+                          );
+                        })}
                       </ul>
                     </div>
                   </div>
@@ -128,7 +128,7 @@ const TransactionHistory = ({
                 Total money moved:{" "}
                 {formatAmount(
                   transactions.reduce(
-                    (sum, t) => sum + t.amountPerReceiver * t.receivers.length,
+                    (sum, t) => sum + t.amountPerPayer * t.payers.length,
                     0,
                   ),
                 )}

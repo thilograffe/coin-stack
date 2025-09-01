@@ -78,22 +78,23 @@ function App() {
       timestamp: new Date(),
       receivers: receivers,
       payers: payers,
-      amountPerReceiver: transaction.amountPerReceiver,
-      description: transaction.description,
+      amountPerPayer: transaction.amountPerPayer,
     };
 
     // Calculate new balances
-    const totalCost = transaction.amountPerReceiver * receivers.length;
-    const costPerPayer = totalCost / payers.length;
+    // Each payer pays the fixed amount, receivers split the total paid amount
+    const costPerPayer = transaction.amountPerPayer;
+    const totalPaid = costPerPayer * payers.length;
+    const amountPerReceiver = totalPaid / receivers.length;
 
     const updatedPlayers = gameState.players.map((player) => {
       let balanceChange = 0;
 
       if (transaction.receivers.includes(player.id)) {
-        // Player receives money
-        balanceChange = transaction.amountPerReceiver;
+        // Player receives their share of the total paid amount
+        balanceChange = amountPerReceiver;
       } else {
-        // Player pays money
+        // Player pays the fixed amount
         balanceChange = -costPerPayer;
       }
 
@@ -134,9 +135,9 @@ function App() {
 
     if (window.confirm("Are you sure you want to undo the last transaction?")) {
       const lastTransaction = gameState.transactions[0];
-      const totalCost =
-        lastTransaction.amountPerReceiver * lastTransaction.receivers.length;
-      const costPerPayer = totalCost / lastTransaction.payers.length;
+      const costPerPayer = lastTransaction.amountPerPayer;
+      const totalPaid = costPerPayer * lastTransaction.payers.length;
+      const amountPerReceiver = totalPaid / lastTransaction.receivers.length;
 
       // Reverse the balance changes
       const updatedPlayers = gameState.players.map((player) => {
@@ -144,7 +145,7 @@ function App() {
 
         if (lastTransaction.receivers.some((r) => r.id === player.id)) {
           // Reverse: Remove what was received
-          balanceChange = -lastTransaction.amountPerReceiver;
+          balanceChange = -amountPerReceiver;
         } else if (lastTransaction.payers.some((p) => p.id === player.id)) {
           // Reverse: Add back what was paid
           balanceChange = costPerPayer;
@@ -169,7 +170,7 @@ function App() {
     <div className="container">
       <header className="text-center mb-4">
         <h1>Coin Stack</h1>
-        <p className="text-gray">Round {gameState.currentRound}</p>
+        <p className="text-gray">Runde {gameState.currentRound}</p>
       </header>
 
       <DebtOverview players={gameState.players} />

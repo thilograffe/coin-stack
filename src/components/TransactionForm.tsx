@@ -13,7 +13,6 @@ const TransactionForm = ({
   onCancel,
 }: TransactionFormProps) => {
   const [amount, setAmount] = useState("");
-  const [description, setDescription] = useState("");
   const [selectedReceivers, setSelectedReceivers] = useState<string[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -50,8 +49,7 @@ const TransactionForm = ({
 
     const transaction: RoundTransaction = {
       receivers: selectedReceivers,
-      amountPerReceiver: parseFloat(amount),
-      description: description.trim() || undefined,
+      amountPerPayer: parseFloat(amount),
     };
 
     onSubmit(transaction);
@@ -92,12 +90,6 @@ const TransactionForm = ({
       .join(", ");
   };
 
-  const getTotalAmountPerPayer = () => {
-    const payersCount = getPayersCount();
-    if (payersCount === 0) return 0;
-    return (parseFloat(amount || "0") * selectedReceivers.length) / payersCount;
-  };
-
   return (
     <div className="modal-overlay">
       <div className="modal fade-in">
@@ -106,7 +98,7 @@ const TransactionForm = ({
 
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">
-              Amount per person (€)
+              Amount each payer pays (€)
             </label>
             <input
               type="number"
@@ -117,31 +109,22 @@ const TransactionForm = ({
                 setAmount(e.target.value);
                 setErrors([]);
               }}
-              placeholder="Enter amount each person receives"
+              placeholder="Enter amount each payer pays"
               className="w-full"
               autoFocus
             />
             {amount && selectedReceivers.length > 0 && getPayersCount() > 0 && (
               <p className="text-sm text-gray mt-1">
-                Total cost: €
-                {(parseFloat(amount) * selectedReceivers.length).toFixed(2)} |
-                Each payer pays: €{getTotalAmountPerPayer().toFixed(2)}
+                Each payer pays: €{parseFloat(amount || "0").toFixed(2)} | Total
+                paid: €
+                {(parseFloat(amount || "0") * getPayersCount()).toFixed(2)} |
+                Each receiver gets: €
+                {(
+                  (parseFloat(amount || "0") * getPayersCount()) /
+                  selectedReceivers.length
+                ).toFixed(2)}
               </p>
             )}
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">
-              Description (Optional)
-            </label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g., Pizza delivery, Movie tickets..."
-              className="w-full"
-              maxLength={100}
-            />
           </div>
 
           <div className="mb-4">
@@ -149,8 +132,8 @@ const TransactionForm = ({
               Who receives the money?
             </h3>
             <p className="text-sm text-gray mb-3">
-              Select 1-3 people who will receive €{amount || "0"} each. The
-              others will pay for it.
+              Select 1-3 people who will receive money. Each non-selected person
+              pays €{amount || "0"}.
             </p>
 
             <div className="grid-2 keep-columns">
@@ -186,7 +169,19 @@ const TransactionForm = ({
                     selectedReceivers.length > 0 &&
                     amount && (
                       <p className="text-xs text-center text-gray mt-1">
-                        Pays €{getTotalAmountPerPayer().toFixed(2)}
+                        Pays €{parseFloat(amount || "0").toFixed(2)}
+                      </p>
+                    )}
+                  {isReceiver(player.id) &&
+                    selectedReceivers.length > 0 &&
+                    amount &&
+                    getPayersCount() > 0 && (
+                      <p className="text-xs text-center text-gray mt-1">
+                        Gets €
+                        {(
+                          (parseFloat(amount || "0") * getPayersCount()) /
+                          selectedReceivers.length
+                        ).toFixed(2)}
                       </p>
                     )}
                 </div>

@@ -59,28 +59,13 @@ const DebtOverview = ({ players }: DebtOverviewProps) => {
   };
 
   const debts = calculateDebts();
-  const hasAnyBalance = players.some((p) => p.balance !== 0);
-
-  if (!hasAnyBalance) {
-    return (
-      <div className="card">
-        <h2>💰 Settlement Overview</h2>
-        <div className="text-center py-8">
-          <p className="text-green font-semibold mb-2">All settled up! 🎉</p>
-          <p className="text-gray text-sm">
-            No one owes anyone money right now.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="card">
-      <h2>💰 Who Owes Whom</h2>
+      <h2>💰 Übersicht der Strafen</h2>
       {debts.length === 0 ? (
         <div className="text-center py-4">
-          <p className="text-gray">No outstanding debts</p>
+          <p className="text-gray">Keine offenen Strafen</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -98,7 +83,7 @@ const DebtOverview = ({ players }: DebtOverviewProps) => {
                   <span className="font-semibold">
                     {getPlayerName(debt.fromPlayerId)}
                   </span>
-                  <div className="text-sm text-gray">owes</div>
+                  <div className="text-sm text-gray">schuldet</div>
                 </div>
                 <div className="text-2xl">→</div>
                 <div>
@@ -114,15 +99,6 @@ const DebtOverview = ({ players }: DebtOverviewProps) => {
               </div>
             </div>
           ))}
-
-          <div
-            className="mt-4 pt-3 border-t"
-            style={{ borderColor: "var(--border)" }}
-          >
-            <p className="text-center text-sm text-gray">
-              💡 Tip: These are the minimum payments needed to settle all debts
-            </p>
-          </div>
         </div>
       )}
     </div>

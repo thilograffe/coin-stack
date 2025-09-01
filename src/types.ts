@@ -9,8 +9,7 @@ export interface Transaction {
   timestamp: Date;
   receivers: Player[];
   payers: Player[];
-  amountPerReceiver: number;
-  description?: string;
+  amountPerPayer: number;
 }
 
 export interface GameState {
@@ -21,8 +20,7 @@ export interface GameState {
 
 export interface RoundTransaction {
   receivers: string[]; // Player IDs (1-3 people)
-  amountPerReceiver: number;
-  description?: string;
+  amountPerPayer: number;
 }
 
 export interface PlayerDebt {
