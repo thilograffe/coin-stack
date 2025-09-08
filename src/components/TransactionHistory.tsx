@@ -5,10 +5,7 @@ interface TransactionHistoryProps {
   onClose: () => void;
 }
 
-const TransactionHistory = ({
-  transactions,
-  onClose,
-}: TransactionHistoryProps) => {
+const TransactionHistory = ({ transactions, onClose }: TransactionHistoryProps) => {
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("en-US", {
       month: "short",
@@ -20,7 +17,7 @@ const TransactionHistory = ({
   };
 
   const formatAmount = (amount: number) => {
-    return `€${amount.toFixed(2)}`;
+    return `${amount.toFixed(2)}€`;
   };
 
   return (
@@ -28,11 +25,7 @@ const TransactionHistory = ({
       <div className="modal fade-in">
         <div className="flex justify-between items-center mb-4">
           <h2>Transaction History</h2>
-          <button
-            onClick={onClose}
-            className="btn-secondary btn-sm"
-            type="button"
-          >
+          <button onClick={onClose} className="btn-secondary btn-sm" type="button">
             ✕
           </button>
         </div>
@@ -62,7 +55,7 @@ const TransactionHistory = ({
                         {formatDate(transaction.timestamp)}
                       </div>
                       <div className="font-semibold text-lg">
-                        {formatAmount(transaction.amountPerPayer)} per payer
+                        {formatAmount(transaction.amountPerPayer)} Strafe
                       </div>
                     </div>
                     <div className="text-right">
@@ -74,33 +67,28 @@ const TransactionHistory = ({
 
                   <div className="grid-2 gap-3">
                     <div>
-                      <h4 className="text-sm font-semibold text-red mb-1">
-                        Paid for it:
-                      </h4>
+                      <h4 className="text-sm font-semibold text-red mb-1">Paid for it:</h4>
                       <ul className="text-sm">
                         {transaction.payers.map((payer) => (
                           <li key={payer.id} className="text-red">
                             • {payer.name} (
-                            {formatAmount(transaction.amountPerPayer)})
+                            {formatAmount(
+                              transaction.payers.length === 1
+                                ? transaction.totalPaid
+                                : transaction.amountPerPayer,
+                            )}
+                            )
                           </li>
                         ))}
                       </ul>
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-green mb-1">
-                        Received:
-                      </h4>
+                      <h4 className="text-sm font-semibold text-green mb-1">Received:</h4>
                       <ul className="text-sm">
                         {transaction.receivers.map((receiver) => {
-                          const totalPaid =
-                            transaction.amountPerPayer *
-                            transaction.payers.length;
-                          const amountPerReceiver =
-                            totalPaid / transaction.receivers.length;
                           return (
                             <li key={receiver.id} className="text-green">
-                              • {receiver.name} (
-                              {formatAmount(amountPerReceiver)})
+                              • {receiver.name} ({formatAmount(transaction.amountPerReceiver)})
                             </li>
                           );
                         })}
@@ -121,17 +109,10 @@ const TransactionHistory = ({
             }}
           >
             <div className="text-center">
-              <p className="text-sm text-gray">
-                Total transactions: {transactions.length}
-              </p>
+              <p className="text-sm text-gray">Total transactions: {transactions.length}</p>
               <p className="text-sm text-gray">
                 Total money moved:{" "}
-                {formatAmount(
-                  transactions.reduce(
-                    (sum, t) => sum + t.amountPerPayer * t.payers.length,
-                    0,
-                  ),
-                )}
+                {formatAmount(transactions.reduce((sum, t) => sum + t.totalPaid, 0))}
               </p>
             </div>
           </div>

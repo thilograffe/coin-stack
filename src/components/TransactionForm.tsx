@@ -7,11 +7,7 @@ interface TransactionFormProps {
   onCancel: () => void;
 }
 
-const TransactionForm = ({
-  players,
-  onSubmit,
-  onCancel,
-}: TransactionFormProps) => {
+const TransactionForm = ({ players, onSubmit, onCancel }: TransactionFormProps) => {
   const [amount, setAmount] = useState("");
   const [selectedReceivers, setSelectedReceivers] = useState<string[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
@@ -47,12 +43,28 @@ const TransactionForm = ({
       return;
     }
 
+    // Calculate new balances
+    // Each payer pays the fixed amount, receivers split the total paid amount
+    const totalPaid = calculateTotalPaid();
+    const amountPerReceiver = totalPaid / selectedReceivers.length;
+
     const transaction: RoundTransaction = {
       receivers: selectedReceivers,
       amountPerPayer: parseFloat(amount),
+      amountPerReceiver: amountPerReceiver,
+      totalPaid: totalPaid,
     };
 
     onSubmit(transaction);
+  };
+
+  const calculateTotalPaid = () => {
+    const costPerPayer = parseFloat(amount);
+    const totalPaid =
+      selectedReceivers.length === 3
+        ? costPerPayer * 3
+        : costPerPayer * (4 - selectedReceivers.length);
+    return totalPaid;
   };
 
   const toggleReceiver = (playerId: string) => {
@@ -94,12 +106,10 @@ const TransactionForm = ({
     <div className="modal-overlay">
       <div className="modal fade-in">
         <form onSubmit={handleSubmit}>
-          <h2 className="mb-4">Add Transaction</h2>
+          <h2 className="mb-4">Strafe hinzufügen</h2>
 
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">
-              Amount each payer pays (€)
-            </label>
+            <label className="block text-sm font-semibold mb-2">Strafe in €</label>
             <input
               type="number"
               step="0.01"
@@ -113,28 +123,11 @@ const TransactionForm = ({
               className="w-full"
               autoFocus
             />
-            {amount && selectedReceivers.length > 0 && getPayersCount() > 0 && (
-              <p className="text-sm text-gray mt-1">
-                Each payer pays: €{parseFloat(amount || "0").toFixed(2)} | Total
-                paid: €
-                {(parseFloat(amount || "0") * getPayersCount()).toFixed(2)} |
-                Each receiver gets: €
-                {(
-                  (parseFloat(amount || "0") * getPayersCount()) /
-                  selectedReceivers.length
-                ).toFixed(2)}
-              </p>
-            )}
           </div>
 
           <div className="mb-4">
-            <h3 className="text-lg font-semibold mb-3">
-              Who receives the money?
-            </h3>
-            <p className="text-sm text-gray mb-3">
-              Select 1-3 people who will receive money. Each non-selected person
-              pays €{amount || "0"}.
-            </p>
+            <h3 className="text-lg font-semibold mb-3">Wer bekommt Geld?</h3>
+            <p className="text-sm text-gray mb-3">Wähle 1-3 Personen, die Geld erhalten.</p>
 
             <div className="grid-2 keep-columns">
               {players.map((player) => (
@@ -148,9 +141,7 @@ const TransactionForm = ({
                         : ""
                   }`}
                 >
-                  <h4 className="font-semibold mb-2 text-center">
-                    {player.name}
-                  </h4>
+                  <h4 className="font-semibold mb-2 text-center">{player.name}</h4>
                   <button
                     type="button"
                     onClick={() => toggleReceiver(player.id)}
@@ -160,28 +151,27 @@ const TransactionForm = ({
                     }`}
                   >
                     {isReceiver(player.id)
-                      ? "Receiving ✓"
+                      ? "Erhält ✓"
                       : isPayer(player.id) && selectedReceivers.length > 0
-                        ? "Paying"
-                        : "Select"}
+                        ? "Zahlt"
+                        : "Auswählen"}
                   </button>
-                  {isPayer(player.id) &&
-                    selectedReceivers.length > 0 &&
-                    amount && (
-                      <p className="text-xs text-center text-gray mt-1">
-                        Pays €{parseFloat(amount || "0").toFixed(2)}
-                      </p>
-                    )}
+                  {isPayer(player.id) && selectedReceivers.length > 0 && amount && (
+                    <p className="text-xs text-center text-gray mt-1">
+                      Zahlt{" "}
+                      {(selectedReceivers.length === 3
+                        ? 3
+                        : 1 * parseFloat(amount || "0")
+                      ).toFixed(2)}
+                      €
+                    </p>
+                  )}
                   {isReceiver(player.id) &&
                     selectedReceivers.length > 0 &&
                     amount &&
                     getPayersCount() > 0 && (
                       <p className="text-xs text-center text-gray mt-1">
-                        Gets €
-                        {(
-                          (parseFloat(amount || "0") * getPayersCount()) /
-                          selectedReceivers.length
-                        ).toFixed(2)}
+                        Bekommt {(calculateTotalPaid() / selectedReceivers.length).toFixed(2)}€
                       </p>
                     )}
                 </div>
@@ -232,11 +222,7 @@ const TransactionForm = ({
           )}
 
           <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="btn-secondary w-full"
-            >
+            <button type="button" onClick={onCancel} className="btn-secondary w-full">
               Cancel
             </button>
             <button type="submit" className="btn-primary w-full">

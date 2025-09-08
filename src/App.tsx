@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import type { GameState, Player, Transaction, RoundTransaction } from "./types";
-import {
-  PlayerList,
-  DebtOverview,
-  TransactionForm,
-  TransactionHistory,
-} from "./components";
+import { PlayerList, DebtOverview, TransactionForm, TransactionHistory } from "./components";
 import "./App.css";
 
 const initialPlayers: Player[] = [
@@ -21,17 +16,13 @@ function App() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved) as GameState & {
-          transactions: Array<
-            Omit<Transaction, "timestamp"> & { timestamp: string }
-          >;
+          transactions: Array<Omit<Transaction, "timestamp"> & { timestamp: string }>;
         };
         // Convert timestamp strings back to Date objects
-        const convertedTransactions: Transaction[] = parsed.transactions.map(
-          (t) => ({
-            ...t,
-            timestamp: new Date(t.timestamp),
-          }),
-        );
+        const convertedTransactions: Transaction[] = parsed.transactions.map((t) => ({
+          ...t,
+          timestamp: new Date(t.timestamp),
+        }));
         return {
           ...parsed,
           transactions: convertedTransactions,
@@ -66,12 +57,8 @@ function App() {
   };
 
   const addTransaction = (transaction: RoundTransaction) => {
-    const receivers = gameState.players.filter((p) =>
-      transaction.receivers.includes(p.id),
-    );
-    const payers = gameState.players.filter(
-      (p) => !transaction.receivers.includes(p.id),
-    );
+    const receivers = gameState.players.filter((p) => transaction.receivers.includes(p.id));
+    const payers = gameState.players.filter((p) => !transaction.receivers.includes(p.id));
 
     const newTransaction: Transaction = {
       id: Date.now().toString(),
@@ -79,23 +66,22 @@ function App() {
       receivers: receivers,
       payers: payers,
       amountPerPayer: transaction.amountPerPayer,
+      amountPerReceiver: transaction.amountPerReceiver,
+      totalPaid: transaction.totalPaid,
     };
-
-    // Calculate new balances
-    // Each payer pays the fixed amount, receivers split the total paid amount
-    const costPerPayer = transaction.amountPerPayer;
-    const totalPaid = costPerPayer * payers.length;
-    const amountPerReceiver = totalPaid / receivers.length;
 
     const updatedPlayers = gameState.players.map((player) => {
       let balanceChange = 0;
 
       if (transaction.receivers.includes(player.id)) {
         // Player receives their share of the total paid amount
-        balanceChange = amountPerReceiver;
+        balanceChange = transaction.amountPerReceiver;
       } else {
         // Player pays the fixed amount
-        balanceChange = -costPerPayer;
+        balanceChange =
+          payers.length === 1
+            ? -(3 * transaction.amountPerPayer)
+            : -transaction.amountPerPayer;
       }
 
       return {
@@ -117,7 +103,7 @@ function App() {
   const resetGame = () => {
     if (
       window.confirm(
-        "Are you sure you want to reset all data? This cannot be undone.",
+        "Bist du sicher, dass du das Spiel zurücksetzen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
       )
     ) {
       setGameState({
@@ -133,11 +119,14 @@ function App() {
   const undoLastTransaction = () => {
     if (gameState.transactions.length === 0) return;
 
-    if (window.confirm("Are you sure you want to undo the last transaction?")) {
+    if (
+      window.confirm(
+        "Bist du sicher, dass du die letzte Transaktion rückgängig machen möchtest?",
+      )
+    ) {
       const lastTransaction = gameState.transactions[0];
       const costPerPayer = lastTransaction.amountPerPayer;
-      const totalPaid = costPerPayer * lastTransaction.payers.length;
-      const amountPerReceiver = totalPaid / lastTransaction.receivers.length;
+      const amountPerReceiver = lastTransaction.amountPerReceiver;
 
       // Reverse the balance changes
       const updatedPlayers = gameState.players.map((player) => {
@@ -148,7 +137,8 @@ function App() {
           balanceChange = -amountPerReceiver;
         } else if (lastTransaction.payers.some((p) => p.id === player.id)) {
           // Reverse: Add back what was paid
-          balanceChange = costPerPayer;
+          balanceChange =
+            lastTransaction.payers.length === 1 ? 3 * costPerPayer : costPerPayer;
         }
 
         return {
@@ -175,17 +165,14 @@ function App() {
 
       <DebtOverview players={gameState.players} />
 
-      <PlayerList
-        players={gameState.players}
-        onUpdatePlayerName={updatePlayerName}
-      />
+      <PlayerList players={gameState.players} onUpdatePlayerName={updatePlayerName} />
 
       <div className="flex flex-col gap-3 mt-4">
         <button
           onClick={() => setShowTransactionForm(true)}
           className="btn-primary btn-lg w-full"
         >
-          Add Transaction
+          Transaktion hinzufügen
         </button>
 
         <div className="grid-2">
@@ -194,7 +181,7 @@ function App() {
             className="btn-secondary"
             disabled={gameState.transactions.length === 0}
           >
-            History ({gameState.transactions.length})
+            Historie ({gameState.transactions.length})
           </button>
 
           <button
@@ -202,12 +189,12 @@ function App() {
             className="btn-secondary"
             disabled={gameState.transactions.length === 0}
           >
-            Undo Last
+            Letztes Spiel zurücknehmen
           </button>
         </div>
 
         <button onClick={resetGame} className="btn-danger btn-sm w-full">
-          Reset Game
+          Ganzes Spiel zurücksetzen
         </button>
       </div>
 
