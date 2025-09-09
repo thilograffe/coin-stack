@@ -5,4 +5,13 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   base: "/coin-stack/",
+  build: {
+    outDir: "dist",
+    assetsDir: "./",
+    rollupOptions: {
+      input: {
+        main: "./index.html",
+      },
+    },
+  },
 });
