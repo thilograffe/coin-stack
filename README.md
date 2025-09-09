@@ -28,11 +28,10 @@ A mobile-first React web application for managing shared expenses between four p
 ### Adding a Transaction
 
 1. Tap "Add Transaction"
-2. Enter the amount each person will receive (in Euros)
-3. Add an optional description (e.g., "Pizza delivery", "Movie tickets")
-4. Select 1-3 people who will receive this amount (they will appear in green)
-5. The remaining people will automatically pay for it (they will appear in red)
-6. Tap "Add Transaction"
+2. Enter the amount of the fine (in Euros)
+3. Select 1-3 people who will receive this amount (they will appear in green)
+4. The remaining people will automatically pay for it (they will appear in red)
+5. Tap "Add Transaction"
 
 ### Managing Players
 
@@ -127,11 +126,8 @@ All data is stored locally in your browser's localStorage. This means:
 
 Perfect for:
 
-- **Shared meals**: Track who paid for dinner and how much each person owes
-- **Group trips**: Manage shared expenses like gas, accommodation, activities
-- **Roommate expenses**: Keep track of shared utilities, groceries, etc.
-- **Movie nights**: Track ticket costs, snacks, and shared expenses
-- **Any group activity** where some people pay and others benefit
+- **Doppelkopf**: Track the amount each player owes or is owed
+- **Euro Currency** support with proper formatting
 
 ## Contributing
 

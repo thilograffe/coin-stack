@@ -160,7 +160,7 @@ function App() {
     <div className="container">
       <header className="text-center mb-4">
         <h1>Coin Stack</h1>
-        <p className="text-gray">Runde {gameState.currentRound}</p>
+        <p className="text-gray">Spiel {gameState.currentRound}</p>
       </header>
 
       <DebtOverview players={gameState.players} />
@@ -194,7 +194,7 @@ function App() {
         </div>
 
         <button onClick={resetGame} className="btn-danger btn-sm w-full">
-          Ganzes Spiel zurücksetzen
+          Alle Spiele zurücksetzen
         </button>
       </div>
 

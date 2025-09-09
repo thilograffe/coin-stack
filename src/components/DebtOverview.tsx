@@ -12,12 +12,8 @@ const DebtOverview = ({ players }: DebtOverviewProps) => {
     // Sort players by balance (most negative first, then most positive)
     balances.sort((a, b) => a.balance - b.balance);
 
-    const debtors = balances
-      .filter((p) => p.balance < 0)
-      .map((p) => ({ ...p }));
-    const creditors = balances
-      .filter((p) => p.balance > 0)
-      .map((p) => ({ ...p }));
+    const debtors = balances.filter((p) => p.balance < 0).map((p) => ({ ...p }));
+    const creditors = balances.filter((p) => p.balance > 0).map((p) => ({ ...p }));
 
     // Calculate minimum debts needed to settle all balances
     while (debtors.length > 0 && creditors.length > 0) {
@@ -80,16 +76,12 @@ const DebtOverview = ({ players }: DebtOverviewProps) => {
             >
               <div className="flex items-center gap-3">
                 <div className="text-right">
-                  <span className="font-semibold">
-                    {getPlayerName(debt.fromPlayerId)}
-                  </span>
+                  <span className="font-semibold">{getPlayerName(debt.fromPlayerId)}</span>
                   <div className="text-sm text-gray">schuldet</div>
                 </div>
                 <div className="text-2xl">→</div>
                 <div>
-                  <span className="font-semibold">
-                    {getPlayerName(debt.toPlayerId)}
-                  </span>
+                  <span className="font-semibold">{getPlayerName(debt.toPlayerId)}</span>
                 </div>
               </div>
               <div className="text-right">

@@ -29,9 +29,7 @@ const PlayerList = ({ players, onUpdatePlayerName }: PlayerListProps) => {
   };
 
   const formatBalance = (balance: number) => {
-    return balance >= 0
-      ? `+€${balance.toFixed(2)}`
-      : `-€${Math.abs(balance).toFixed(2)}`;
+    return balance >= 0 ? `+€${balance.toFixed(2)}` : `-€${Math.abs(balance).toFixed(2)}`;
   };
 
   return (
@@ -62,19 +60,13 @@ const PlayerList = ({ players, onUpdatePlayerName }: PlayerListProps) => {
                   >
                     Save
                   </button>
-                  <button
-                    onClick={cancelEdit}
-                    className="btn-secondary btn-sm w-full"
-                  >
+                  <button onClick={cancelEdit} className="btn-secondary btn-sm w-full">
                     Cancel
                   </button>
                 </div>
               </div>
             ) : (
-              <div
-                onClick={() => startEditing(player)}
-                className="cursor-pointer"
-              >
+              <div onClick={() => startEditing(player)} className="cursor-pointer">
                 <h3 className="text-center mb-2">{player.name}</h3>
                 <div
                   className={`balance-display ${
@@ -87,9 +79,7 @@ const PlayerList = ({ players, onUpdatePlayerName }: PlayerListProps) => {
                 >
                   {formatBalance(player.balance)}
                 </div>
-                <p className="text-center text-sm text-gray mt-2">
-                  Tap to edit name
-                </p>
+                <p className="text-center text-sm text-gray mt-2">Tippe, um Namen zu ändern</p>
               </div>
             )}
           </div>

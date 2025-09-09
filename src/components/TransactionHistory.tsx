@@ -7,12 +7,12 @@ interface TransactionHistoryProps {
 
 const TransactionHistory = ({ transactions, onClose }: TransactionHistoryProps) => {
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
+    return new Intl.DateTimeFormat("de-DE", {
       month: "short",
       day: "numeric",
       hour: "numeric",
       minute: "2-digit",
-      hour12: true,
+      year: "numeric",
     }).format(date);
   };
 
@@ -24,7 +24,7 @@ const TransactionHistory = ({ transactions, onClose }: TransactionHistoryProps) 
     <div className="modal-overlay">
       <div className="modal fade-in">
         <div className="flex justify-between items-center mb-4">
-          <h2>Transaction History</h2>
+          <h2>Spiel Historie</h2>
           <button onClick={onClose} className="btn-secondary btn-sm" type="button">
             ✕
           </button>
@@ -32,9 +32,9 @@ const TransactionHistory = ({ transactions, onClose }: TransactionHistoryProps) 
 
         {transactions.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray">No transactions yet</p>
+            <p className="text-gray">Noch keine Spiele</p>
             <p className="text-sm text-gray mt-2">
-              Add your first money transaction to get started
+              Füge dein erstes Spiel hinzu, um zu beginnen
             </p>
           </div>
         ) : (
@@ -52,26 +52,24 @@ const TransactionHistory = ({ transactions, onClose }: TransactionHistoryProps) 
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
                       <div className="text-sm text-gray">
-                        {formatDate(transaction.timestamp)}
+                        Spiel #{transactions.length - index}
                       </div>
                       <div className="font-semibold text-lg">
                         {formatAmount(transaction.amountPerPayer)} Strafe
                       </div>
-                    </div>
-                    <div className="text-right">
                       <div className="text-sm text-gray">
-                        Round #{transactions.length - index}
+                        {formatDate(transaction.timestamp)}
                       </div>
                     </div>
                   </div>
 
                   <div className="grid-2 gap-3">
                     <div>
-                      <h4 className="text-sm font-semibold text-red mb-1">Paid for it:</h4>
+                      <h4 className="text-sm font-semibold text-red mb-1">Bezahlt:</h4>
                       <ul className="text-sm">
                         {transaction.payers.map((payer) => (
                           <li key={payer.id} className="text-red">
-                            • {payer.name} (
+                            {payer.name} (
                             {formatAmount(
                               transaction.payers.length === 1
                                 ? transaction.totalPaid
@@ -83,12 +81,12 @@ const TransactionHistory = ({ transactions, onClose }: TransactionHistoryProps) 
                       </ul>
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-green mb-1">Received:</h4>
+                      <h4 className="text-sm font-semibold text-green mb-1">Erhalten:</h4>
                       <ul className="text-sm">
                         {transaction.receivers.map((receiver) => {
                           return (
                             <li key={receiver.id} className="text-green">
-                              • {receiver.name} ({formatAmount(transaction.amountPerReceiver)})
+                              {receiver.name} ({formatAmount(transaction.amountPerReceiver)})
                             </li>
                           );
                         })}
@@ -109,9 +107,9 @@ const TransactionHistory = ({ transactions, onClose }: TransactionHistoryProps) 
             }}
           >
             <div className="text-center">
-              <p className="text-sm text-gray">Total transactions: {transactions.length}</p>
+              <p className="text-sm text-gray">Anzahl Spiele: {transactions.length}</p>
               <p className="text-sm text-gray">
-                Total money moved:{" "}
+                Gesamte Transaktionssumme:{" "}
                 {formatAmount(transactions.reduce((sum, t) => sum + t.totalPaid, 0))}
               </p>
             </div>
@@ -120,7 +118,7 @@ const TransactionHistory = ({ transactions, onClose }: TransactionHistoryProps) 
 
         <div className="mt-4">
           <button onClick={onClose} className="btn-primary w-full">
-            Close
+            Schließen
           </button>
         </div>
       </div>

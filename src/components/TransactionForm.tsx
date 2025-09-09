@@ -16,19 +16,19 @@ const TransactionForm = ({ players, onSubmit, onCancel }: TransactionFormProps) 
     const newErrors: string[] = [];
 
     if (!amount || parseFloat(amount) <= 0) {
-      newErrors.push("Amount must be greater than 0");
+      newErrors.push("Wert muss größer als 0 sein");
     }
 
     if (selectedReceivers.length === 0) {
-      newErrors.push("Select at least 1 person to receive money");
+      newErrors.push("Wähle mindestens eine Person, die Geld erhalten soll");
     }
 
     if (selectedReceivers.length > 3) {
-      newErrors.push("Maximum 3 people can receive money");
+      newErrors.push("Maximal 3 Personen können Geld erhalten");
     }
 
     if (selectedReceivers.length === 4) {
-      newErrors.push("At least 1 person must pay (not everyone can receive)");
+      newErrors.push("Wenigstens eine Person muss bezahlen (nicht jeder kann Geld erhalten)");
     }
 
     return newErrors;
@@ -119,7 +119,7 @@ const TransactionForm = ({ players, onSubmit, onCancel }: TransactionFormProps) 
                 setAmount(e.target.value);
                 setErrors([]);
               }}
-              placeholder="Enter amount each payer pays"
+              placeholder="Strafe in €"
               className="w-full"
               autoFocus
             />
@@ -160,8 +160,8 @@ const TransactionForm = ({ players, onSubmit, onCancel }: TransactionFormProps) 
                     <p className="text-xs text-center text-gray mt-1">
                       Zahlt{" "}
                       {(selectedReceivers.length === 3
-                        ? 3
-                        : 1 * parseFloat(amount || "0")
+                        ? calculateTotalPaid()
+                        : parseFloat(amount || "0")
                       ).toFixed(2)}
                       €
                     </p>
@@ -215,7 +215,7 @@ const TransactionForm = ({ players, onSubmit, onCancel }: TransactionFormProps) 
             >
               <ul className="text-sm text-red">
                 {errors.map((error, index) => (
-                  <li key={index}>• {error}</li>
+                  <li key={index}>{error}</li>
                 ))}
               </ul>
             </div>
@@ -223,10 +223,10 @@ const TransactionForm = ({ players, onSubmit, onCancel }: TransactionFormProps) 
 
           <div className="flex gap-3">
             <button type="button" onClick={onCancel} className="btn-secondary w-full">
-              Cancel
+              Abbrechen
             </button>
             <button type="submit" className="btn-primary w-full">
-              Add Transaction
+              Spiel hinzufügen
             </button>
           </div>
         </form>
