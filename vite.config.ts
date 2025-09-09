@@ -7,11 +7,13 @@ export default defineConfig({
   base: "/coin-stack/",
   build: {
     outDir: "dist",
-    assetsDir: "./",
+    assetsDir: "assets",
+    sourcemap: false,
     rollupOptions: {
-      input: {
-        main: "./index.html",
+      output: {
+        manualChunks: undefined,
       },
     },
   },
+  publicDir: "public",
 });
