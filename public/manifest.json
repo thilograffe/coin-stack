@@ -2,7 +2,7 @@
   "name": "Coin Stack - Doppelkopf",
   "short_name": "Coin Stack",
   "description": "A mobile-first webapp to track shared expenses between friends with Euro currency support",
-  "start_url": "/manifest.json",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#2563eb",
