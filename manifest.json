@@ -1,0 +1,28 @@
+{
+  "name": "Coin Stack - Doppelkopf",
+  "short_name": "Coin Stack",
+  "description": "A mobile-first webapp to track shared expenses between friends with Euro currency support",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "categories": ["finance", "utilities"],
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/vite.svg",
+      "sizes": "320x568",
+      "type": "image/svg+xml"
+    }
+  ],
+  "prefer_related_applications": false,
+  "lang": "en-US"
+}
