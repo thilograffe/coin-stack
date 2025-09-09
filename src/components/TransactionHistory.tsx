@@ -109,7 +109,7 @@ const TransactionHistory = ({ transactions, onClose }: TransactionHistoryProps) 
             <div className="text-center">
               <p className="text-sm text-gray">Anzahl Spiele: {transactions.length}</p>
               <p className="text-sm text-gray">
-                Gesamte Transaktionssumme:{" "}
+                Summe aller Strafen:{" "}
                 {formatAmount(transactions.reduce((sum, t) => sum + t.totalPaid, 0))}
               </p>
             </div>

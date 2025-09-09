@@ -172,7 +172,7 @@ function App() {
           onClick={() => setShowTransactionForm(true)}
           className="btn-primary btn-lg w-full"
         >
-          Transaktion hinzufügen
+          Strafe hinzufügen
         </button>
 
         <div className="grid-2">
